@@ -59,4 +59,50 @@ TEST(LRUReplacerTest, SampleTest) {
   EXPECT_EQ(4, value);
 }
 
+TEST(LRUReplacerTest, EmptyReplacerTest) {
+  LRUReplacer lru_replacer(5);
+
+  // The replacer is initially empty
+  EXPECT_EQ(0, lru_replacer.Size());
+
+  // Trying to get a victim from an empty replacer should return false
+  int value;
+  EXPECT_FALSE(lru_replacer.Victim(&value));
+}
+
+TEST(LRUReplacerTest, PinAllFramesTest) {
+  LRUReplacer lru_replacer(3);
+
+  // Pin all frames
+  lru_replacer.Pin(1);
+  lru_replacer.Pin(2);
+  lru_replacer.Pin(3);
+
+  // The size of the replacer should be 0 since all frames are pinned
+  EXPECT_EQ(0, lru_replacer.Size());
+
+  // Trying to get a victim from a fully pinned replacer should return false
+  int value;
+  EXPECT_FALSE(lru_replacer.Victim(&value));
+}
+
+TEST(LRUReplacerTest, UnpinPinnedFrameTest) {
+  LRUReplacer lru_replacer(4);
+
+  // Pin frame 1
+  lru_replacer.Pin(1);
+
+  // Unpin frame 1
+  lru_replacer.Unpin(1);
+
+  // The size of the replacer should be 1 since frame 1 is unpinned
+  EXPECT_EQ(1, lru_replacer.Size());
+
+  // Frame 1 should be the next victim since it was the last unpinned frame
+  int value;
+  EXPECT_TRUE(lru_replacer.Victim(&value));
+  EXPECT_EQ(1, value);
+}
+
+
 }  // namespace bustub
