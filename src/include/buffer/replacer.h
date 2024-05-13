@@ -13,6 +13,8 @@
 #pragma once
 
 #include "common/config.h"
+#include <list>
+#include <unordered_map>
 
 namespace bustub {
 

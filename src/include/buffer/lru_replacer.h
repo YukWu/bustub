@@ -46,7 +46,15 @@ class LRUReplacer : public Replacer {
   auto Size() -> size_t override;
 
  private:
-  // TODO(student): implement me!
+  struct LRUNode {
+    frame_id_t frame_id;
+    bool evict_able;
+  };
+  using LRUNodeRef = std::list<LRUNode>::iterator;
+  std::list<LRUNode> lru_list_;
+  std::unordered_map<frame_id_t, LRUNodeRef> lru_map_;
+  size_t num_pages_;
+  size_t evict_able_count_{0};
 };
 
 }  // namespace bustub
